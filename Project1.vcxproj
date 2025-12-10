@@ -86,6 +86,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalIncludeDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\detail;C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;C:\Users\Admin\Downloads\glm-1.0.2\glm\ext;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtx;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtc;C:\Users\Admin\Downloads\glm-1.0.2\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,6 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalIncludeDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\detail;C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;C:\Users\Admin\Downloads\glm-1.0.2\glm\ext;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtx;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtc;C:\Users\Admin\Downloads\glm-1.0.2\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,16 +145,28 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="config_hastexture.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ObjectAnimator.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="Scene1.cpp" />
+    <ClCompile Include="Scene2.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="SimpleScene.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="config.h" />
+    <ClInclude Include="config_hastexture.h" />
+    <ClInclude Include="config_notexture.h" />
+    <ClInclude Include="ObjectAnimator.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="Scene1.h" />
+    <ClInclude Include="Scene2.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="SimpleScene.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>

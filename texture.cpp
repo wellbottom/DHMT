@@ -5,7 +5,7 @@
 
 unsigned int Texture::LoadTexture(const char* path)
 {
-    unsigned int textureID;
+    unsigned int textureID; 
     glGenTextures(1, &textureID);
 
     int width, height, nrChannels;
