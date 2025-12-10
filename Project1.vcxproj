@@ -148,25 +148,19 @@
     <ClCompile Include="config_hastexture.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="ObjectAnimator.cpp" />
-    <ClCompile Include="scene.cpp" />
-    <ClCompile Include="Scene1.cpp" />
-    <ClCompile Include="Scene2.cpp" />
     <ClCompile Include="shader.cpp" />
-    <ClCompile Include="SimpleScene.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="config_hastexture.h" />
     <ClInclude Include="config_notexture.h" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="ObjectAnimator.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="scene.h" />
-    <ClInclude Include="Scene1.h" />
-    <ClInclude Include="Scene2.h" />
     <ClInclude Include="shader.h" />
-    <ClInclude Include="SimpleScene.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>

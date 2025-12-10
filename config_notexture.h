@@ -27,6 +27,16 @@ static const char* vertexShaderSource =
 "}\n\0";
 
 // Fragment Shader for the lit object (WITHOUT TEXTURE, NO SPOTLIGHT)
+
+// Fragment Shader for the light source cube
+static const char* lightCubeFragmentShaderSource =
+"#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(1.0);\n"
+"}\n\0";
+
 static const char* lightingFragmentShaderSource =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
@@ -55,6 +65,19 @@ static const char* lightingFragmentShaderSource =
 "    vec3 specular;\n"
 "};\n"
 "\n"
+"struct SpotLight {\n"
+"    vec3 position;\n"
+"    vec3 direction;\n"
+"    float cutOff;\n"
+"    float outerCutOff;\n"
+"    float constant;\n"
+"    float linear;\n"
+"    float quadratic;\n"
+"    vec3 ambient;\n"
+"    vec3 diffuse;\n"
+"    vec3 specular;\n"
+"};\n"
+"\n"
 "#define NR_POINT_LIGHTS 4\n"
 "\n"
 "in vec3 FragPos;\n"
@@ -64,10 +87,12 @@ static const char* lightingFragmentShaderSource =
 "uniform vec3 viewPos;\n"
 "uniform DirLight dirLight;\n"
 "uniform PointLight pointLights[NR_POINT_LIGHTS];\n"
+"uniform SpotLight spotLight;\n"
 "uniform Material material;\n"
 "\n"
 "vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);\n"
 "vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);\n"
+"vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -77,6 +102,8 @@ static const char* lightingFragmentShaderSource =
 "    vec3 result = CalcDirLight(dirLight, norm, viewDir);\n"
 "    for(int i = 0; i < NR_POINT_LIGHTS; i++)\n"
 "        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);\n"
+"    // add spot light contribution\n"
+"    result += CalcSpotLight(spotLight, norm, FragPos, viewDir);\n"
 "\n"
 "    FragColor = vec4(result, 1.0);\n"
 "}\n"
@@ -108,15 +135,35 @@ static const char* lightingFragmentShaderSource =
 "    diffuse *= attenuation;\n"
 "    specular *= attenuation;\n"
 "    return (ambient + diffuse + specular);\n"
+"}\n"
+"\n"
+"vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)\n"
+"{\n"
+"    vec3 lightDir = normalize(light.position - fragPos);\n"
+"    float diff = max(dot(normal, lightDir), 0.0);\n"
+"    vec3 reflectDir = reflect(-lightDir, normal);\n"
+"    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);\n"
+"\n"
+"    float distance = length(light.position - fragPos);\n"
+"    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));\n"
+"\n"
+"    // spotlight intensity (using cutOff/outerCutOff as cos(angle))\n"
+"    float theta = dot(lightDir, normalize(-light.direction));\n"
+"    float epsilon = light.cutOff - light.outerCutOff;\n"
+"    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);\n"
+"\n"
+"    vec3 ambient = light.ambient * material.diffuse;\n"
+"    vec3 diffuse = light.diffuse * diff * material.diffuse;\n"
+"    vec3 specular = light.specular * spec * material.specular;\n"
+"\n"
+"    ambient *= attenuation * intensity;\n"
+"    diffuse *= attenuation * intensity;\n"
+"    specular *= attenuation * intensity;\n"
+"\n"
+"    return (ambient + diffuse + specular);\n"
 "}\n\0";
 
-// Fragment Shader for the light source cube
-static const char* lightCubeFragmentShaderSource =
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0);\n"
-"}\n\0";
+
+
 
 #endif

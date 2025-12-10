@@ -4,12 +4,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
-
+#include "mesh.h"
 #include "shader.h"
 #include "camera.h"
 #include "texture.h"
-//#include "config_notexture.h"
 #include "config_notexture.h"
+//#include "config_hastexture.h"
 
 #include "ObjectAnimator.h"  // Include the animator
 
@@ -19,6 +19,10 @@ enum SceneType
     SCENE_A = 0,
     SCENE_B = 1
 };
+
+float rotationAngle = 0.0f;
+bool rPressedLastFrame = false;
+
 
 SceneType currentScene = SCENE_A;
 
@@ -75,54 +79,10 @@ int main()
     Shader lightingShader(vertexShaderSource, lightingFragmentShaderSource);
     Shader lightCubeShader(vertexShaderSource, lightCubeFragmentShaderSource);
 
-    // Cube vertices
-    float vertices[] = {
-        // positions          // normals           // texture coords
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-    };
-
-    // Positions for 10 cubes
-    glm::vec3 cubePositions[] = {
+    // Positions for 10 objets
+    glm::vec3 objectPositions[] = {
         glm::vec3(0.0f,  0.0f,  0.0f),
         glm::vec3(2.0f,  5.0f, -15.0f),
         glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -137,14 +97,14 @@ int main()
 
     // STEP 5: Create Animators for Boxes
     // Animate the first cube (index 0) with circular motion
-    ObjectAnimator boxAnimator1(cubePositions[0]);
+    ObjectAnimator boxAnimator1(objectPositions[0]);
     boxAnimator1.setAnimationType(CIRCULAR);
     boxAnimator1.setRadius(2.0f);
     boxAnimator1.setSpeed(1.0f);
     boxAnimator1.setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
 
     // Animate the second cube (index 1) with bounce
-    ObjectAnimator boxAnimator2(cubePositions[1]);
+    ObjectAnimator boxAnimator2(objectPositions[1]);
     boxAnimator2.setAnimationType(BOUNCE);
     boxAnimator2.setSpeed(2.0f);
     boxAnimator2.setAmplitude(glm::vec3(0.0f, 3.0f, 0.0f));
@@ -157,38 +117,38 @@ int main()
         glm::vec3(0.0f,  0.0f, -3.0f)
     };
 
-    // STEP 6: Create Animators for Lights
-    // Animate first light in circular motion
-    ObjectAnimator lightAnimator1(pointLightPositions[0]);
-    lightAnimator1.setAnimationType(CIRCULAR);
-    lightAnimator1.setRadius(4.0f);
-    lightAnimator1.setSpeed(0.5f);
-    lightAnimator1.setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
+    //// STEP 6: Create Animators for Lights
+    //// Animate first light in circular motion
+    //ObjectAnimator lightAnimator1(pointLightPositions[0]);
+    //lightAnimator1.setAnimationType(CIRCULAR);
+    //lightAnimator1.setRadius(4.0f);
+    //lightAnimator1.setSpeed(0.5f);
+    //lightAnimator1.setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
 
-    // Animate second light in figure-8 pattern
-    ObjectAnimator lightAnimator2(pointLightPositions[1]);
-    lightAnimator2.setAnimationType(FIGURE_EIGHT);
-    lightAnimator2.setRadius(3.0f);
-    lightAnimator2.setSpeed(0.8f);
-    lightAnimator2.setCenter(glm::vec3(0.0f, 0.0f, -5.0f));
+    //// Animate second light in figure-8 pattern
+    //ObjectAnimator lightAnimator2(pointLightPositions[1]);
+    //lightAnimator2.setAnimationType(FIGURE_EIGHT);
+    //lightAnimator2.setRadius(3.0f);
+    //lightAnimator2.setSpeed(0.8f);
+    //lightAnimator2.setCenter(glm::vec3(0.0f, 0.0f, -5.0f));
 
-    // Third light orbits around Y-axis
-    ObjectAnimator lightAnimator3(pointLightPositions[2]);
-    lightAnimator3.setAnimationType(ORBIT);
-    lightAnimator3.setSpeed(0.3f);
-    lightAnimator3.setCenter(glm::vec3(-2.0f, 0.0f, -8.0f));
-    lightAnimator3.setAxis(glm::vec3(0.0f, 1.0f, 0.0f));
+    //// Third light orbits around Y-axis
+    //ObjectAnimator lightAnimator3(pointLightPositions[2]);
+    //lightAnimator3.setAnimationType(ORBIT);
+    //lightAnimator3.setSpeed(0.3f);
+    //lightAnimator3.setCenter(glm::vec3(-2.0f, 0.0f, -8.0f));
+    //lightAnimator3.setAxis(glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // STEP 7: Custom Animation for Fourth Light
-    lightAnimator3.setAnimationType(CUSTOM);
-    lightAnimator3.setCustomFunction([](glm::vec3 start, float time, float speed) {
-        // Spiral motion
-        float radius = 2.0f + sin(time * 0.5f) * 1.0f;
-        float x = start.x + radius * cos(time);
-        float y = start.y + sin(time * 2.0f) * 2.0f;
-        float z = start.z + radius * sin(time);
-        return glm::vec3(x, y, z);
-        });
+    //// STEP 7: Custom Animation for Fourth Light
+    //lightAnimator3.setAnimationType(CUSTOM);
+    //lightAnimator3.setCustomFunction([](glm::vec3 start, float time, float speed) {
+    //    // Spiral motion
+    //    float radius = 2.0f + sin(time * 0.5f) * 1.0f;
+    //    float x = start.x + radius * cos(time);
+    //    float y = start.y + sin(time * 2.0f) * 2.0f;
+    //    float z = start.z + radius * sin(time);
+    //    return glm::vec3(x, y, z);
+    //    });
 
     // Set up cube VAO and VBO
     GLuint cubeVAO, VBO;
@@ -196,8 +156,16 @@ int main()
     glGenBuffers(1, &VBO);
 
     glBindVertexArray(cubeVAO);
+    Mesh::Type currentMesh = Mesh::TETRAHEDRON;
+
+    const auto& verts = Mesh::GetVertices(currentMesh);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+        verts.size() * sizeof(float),
+        verts.data(),
+        GL_STATIC_DRAW);
+
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -238,30 +206,40 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // STEP 8: Update Animations - Call update() each frame
-        cubePositions[0] = boxAnimator1.update(currentFrame);
-        cubePositions[1] = boxAnimator2.update(currentFrame);
+        objectPositions[0] = boxAnimator1.update(currentFrame);
+        objectPositions[1] = boxAnimator2.update(currentFrame);
 
-        pointLightPositions[0] = lightAnimator1.update(currentFrame);
-        pointLightPositions[1] = lightAnimator2.update(currentFrame);
-        pointLightPositions[2] = lightAnimator3.update(currentFrame);
+        //pointLightPositions[0] = lightAnimator1.update(currentFrame);
+        //pointLightPositions[1] = lightAnimator2.update(currentFrame);
+        //pointLightPositions[2] = lightAnimator3.update(currentFrame);
 
         lightingShader.use();
         lightingShader.setVec3("viewPos", camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
-        //set materials colors
-
-        lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);  // Orange-ish color
-        lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 
 
 
         // Point lights with updated positions
         for (int i = 0; i < 4; i++)
         {
+
             std::string number = std::to_string(i);
+
+            glm::vec3 spotLightPos = objectPositions[i];   // light moves with object
+            glm::vec3 targetPos = objectPositions[1];   // light points to another object
+            glm::vec3 spotDir = glm::normalize(targetPos - spotLightPos);
+            
+            
+            //set materials colors
+
+            //direction light
+            lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+            lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);  // Orange-ish color
+            lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+            lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+
+            //point light
             lightingShader.setVec3("pointLights[" + number + "].position", pointLightPositions[i]);
             lightingShader.setVec3("pointLights[" + number + "].ambient", 0.05f, 0.05f, 0.05f);
             lightingShader.setVec3("pointLights[" + number + "].diffuse", 0.8f, 0.8f, 0.8f);
@@ -269,10 +247,17 @@ int main()
             lightingShader.setFloat("pointLights[" + number + "].constant", 1.0f);
             lightingShader.setFloat("pointLights[" + number + "].linear", 0.09f);
             lightingShader.setFloat("pointLights[" + number + "].quadratic", 0.032f);
+
+
+
+
+
         }
 
-        /*lightingShader.setVec3("spotLight.position", camera.Position);
-        lightingShader.setVec3("spotLight.direction", camera.Front);
+        //spot light
+        lightingShader.setVec3("spotLight.position", glm::vec3(0.0f, 3.0f, 0.0f));     // light location
+        lightingShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
+
         lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
         lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
@@ -280,7 +265,7 @@ int main()
         lightingShader.setFloat("spotLight.linear", 0.09f);
         lightingShader.setFloat("spotLight.quadratic", 0.032f);
         lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-        lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));*/
+        lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
@@ -300,11 +285,11 @@ int main()
         // Render based on active scene
         if (currentScene == SCENE_A)
         {
-            renderSceneA(cubeVAO, lightingShader, view, projection, cubePositions);
+            renderSceneA(cubeVAO, lightingShader, view, projection, objectPositions);
         }
         else
         {
-            renderSceneB(cubeVAO, lightingShader, view, projection, cubePositions);
+            renderSceneB(cubeVAO, lightingShader, view, projection, objectPositions);
         }
 
 
@@ -361,6 +346,22 @@ void processInput(GLFWwindow* window)
     {
         enterPressedLastFrame = false;
     }
+
+    // Rotate scene by 90 degrees when R is pressed
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && !rPressedLastFrame)
+    {
+        rotationAngle += 90.0f;
+        if (rotationAngle >= 360.0f)
+            rotationAngle = 0.0f;
+
+        rPressedLastFrame = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE)
+    {
+        rPressedLastFrame = false;
+    }
+
 }
 
 
