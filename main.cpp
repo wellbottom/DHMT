@@ -51,7 +51,7 @@ void renderScene(GLuint cubeVAO, GLuint planeVAO, GLuint sphereVAO, GLuint windo
 
     // Classroom dimensions
     float classroomWidth = 50.0f;
-    float classroomHeight = 10.0f;
+    float classroomHeight = 15.0f;
     float classroomDepth = 50.0f;
     float wallThickness = 0.2f;
 
@@ -98,90 +98,15 @@ void renderScene(GLuint cubeVAO, GLuint planeVAO, GLuint sphereVAO, GLuint windo
     glBindVertexArray(cubeVAO);
 
     // ============================================
-    // FRONT WALL (Z = +classroomDepth/2) - 2 windows
+    // FRONT WALL (Z = +classroomDepth/2) - SOLID WALL (no windows)
     // ============================================
     float frontZ = classroomDepth / 2.0f;
 
-    // Window positions for front wall
-    float leftWindowX = -2.0f;
-    float rightWindowX = 2.0f;
-
-    // Calculate wall section boundaries
-    float leftWindowLeft = leftWindowX - windowWidth / 2.0f;   // -3.25
-    float leftWindowRight = leftWindowX + windowWidth / 2.0f;  // -0.75
-    float rightWindowLeft = rightWindowX - windowWidth / 2.0f; // 0.75
-    float rightWindowRight = rightWindowX + windowWidth / 2.0f; // 3.25
-
-    // Far left wall section (from room edge to left window)
-    {
-        float wallWidth = leftWindowLeft - (-classroomWidth / 2.0f);
-        float wallCenterX = -classroomWidth / 2.0f + wallWidth / 2.0f;
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(wallCenterX, classroomHeight / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(wallWidth, classroomHeight, wallThickness));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-    }
-
-    // Left horizontal frame (below window)
+    // Single solid wall segment (no windows)
     {
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(leftWindowX, (windowY - windowHeight / 2.0f) / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(windowWidth, windowY - windowHeight / 2.0f, wallThickness));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-    }
-
-    // Left horizontal frame (above window)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        float topY = windowY + windowHeight / 2.0f;
-        model = glm::translate(model, glm::vec3(leftWindowX, topY + (classroomHeight - topY) / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(windowWidth, classroomHeight - topY, wallThickness));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-    }
-
-    // Middle wall section (between two windows)
-    {
-        float wallWidth = rightWindowLeft - leftWindowRight;
-        float wallCenterX = leftWindowRight + wallWidth / 2.0f;
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(wallCenterX, classroomHeight / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(wallWidth, classroomHeight, wallThickness));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-    }
-
-    // Right horizontal frame (below window)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(rightWindowX, (windowY - windowHeight / 2.0f) / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(windowWidth, windowY - windowHeight / 2.0f, wallThickness));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-    }
-
-    // Right horizontal frame (above window)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        float topY = windowY + windowHeight / 2.0f;
-        model = glm::translate(model, glm::vec3(rightWindowX, topY + (classroomHeight - topY) / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(windowWidth, classroomHeight - topY, wallThickness));
-        lightingShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-    }
-
-    // Far right wall section (from right window to room edge)
-    {
-        float wallWidth = (classroomWidth / 2.0f) - rightWindowRight;
-        float wallCenterX = rightWindowRight + wallWidth / 2.0f;
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(wallCenterX, classroomHeight / 2.0f, frontZ));
-        model = glm::scale(model, glm::vec3(wallWidth, classroomHeight, wallThickness));
+        model = glm::translate(model, glm::vec3(0.0f, classroomHeight / 2.0f, frontZ));
+        model = glm::scale(model, glm::vec3(classroomWidth, classroomHeight, wallThickness));
         lightingShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
     }
@@ -190,6 +115,16 @@ void renderScene(GLuint cubeVAO, GLuint planeVAO, GLuint sphereVAO, GLuint windo
     // BACK WALL (Z = -classroomDepth/2) - 2 windows
     // ============================================
     float backZ = -classroomDepth / 2.0f;
+
+    // Window positions for back wall
+    float leftWindowX = -2.0f;
+    float rightWindowX = 2.0f;
+
+    // Calculate wall section boundaries
+    float leftWindowLeft = leftWindowX - windowWidth / 2.0f;
+    float leftWindowRight = leftWindowX + windowWidth / 2.0f;
+    float rightWindowLeft = rightWindowX - windowWidth / 2.0f;
+    float rightWindowRight = rightWindowX + windowWidth / 2.0f;
 
     // Far left wall section
     {
@@ -268,8 +203,8 @@ void renderScene(GLuint cubeVAO, GLuint planeVAO, GLuint sphereVAO, GLuint windo
     float centerWindowZ = 0.0f;
 
     // Calculate wall section boundaries along Z axis
-    float windowFront = centerWindowZ + windowWidth / 2.0f;  // 1.25
-    float windowBack = centerWindowZ - windowWidth / 2.0f;   // -1.25
+    float windowFront = centerWindowZ + windowWidth / 2.0f;
+    float windowBack = centerWindowZ - windowWidth / 2.0f;
 
     // Front wall section (from front edge to window)
     {
@@ -373,16 +308,6 @@ void renderScene(GLuint cubeVAO, GLuint planeVAO, GLuint sphereVAO, GLuint windo
     lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
     lightingShader.setFloat("material.alpha", 0.3f);
 
-    // Front wall windows
-    for (int i = 0; i < 2; i++)
-    {
-        glm::mat4 windowModel = glm::mat4(1.0f);
-        windowModel = glm::translate(windowModel, glm::vec3(-2.0f + i * 4.0f, windowY, frontZ + 0.01f));
-        windowModel = glm::scale(windowModel, glm::vec3(windowWidth, windowHeight, 1.0f));
-        lightingShader.setMat4("model", windowModel);
-        glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::WINDOW));
-    }
-
     // Back wall windows
     for (int i = 0; i < 2; i++)
     {
@@ -466,12 +391,11 @@ void renderDesk(GLuint cubeVAO, GLuint planeVAO, Shader& shader, glm::mat4& view
     float subSurfaceThickness = 0.1f;
 
     float frontPanelThickness = 0.1f;
-    float frontPanelHeight = 1.5f; // Height of the front panel
+    float frontPanelHeight = 1.5f;
 
-    float tableHeight = 3.0f;  // Total height from floor to top of main surface
+    float tableHeight = 3.0f;
     float legWidth = 0.1f;
 
-    // Gap between main surface and sub-surface
     float gapBetweenSurfaces = 0.8f;
 
     // Wood color (brown)
@@ -485,7 +409,7 @@ void renderDesk(GLuint cubeVAO, GLuint planeVAO, Shader& shader, glm::mat4& view
     shader.setFloat("material.shininess", 32.0f);
     shader.setFloat("material.alpha", 1.0f);
 
-    // 1. MAIN SURFACE (top, 2.0f thick, 5.0f x 2.0f)
+    // 1. MAIN SURFACE
     glBindVertexArray(cubeVAO);
     glm::mat4 mainSurfaceModel = glm::mat4(1.0f);
     mainSurfaceModel = glm::translate(mainSurfaceModel, position + glm::vec3(0.0f, tableHeight - mainSurfaceThickness / 2.0f, 0.0f));
@@ -493,19 +417,16 @@ void renderDesk(GLuint cubeVAO, GLuint planeVAO, Shader& shader, glm::mat4& view
     shader.setMat4("model", mainSurfaceModel);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-    // 2. SUB-SURFACE (parallel to main, 1.0f thick, 5.0f x 1.5f)
-    // Positioned below main surface with a gap
+    // 2. SUB-SURFACE
     float subSurfaceY = tableHeight - mainSurfaceThickness - gapBetweenSurfaces - subSurfaceThickness / 2.0f;
     glm::mat4 subSurfaceModel = glm::mat4(1.0f);
-    // Align to back (since it's smaller in depth)
     float subSurfaceZOffset = -(mainSurfaceDepth - subSurfaceDepth) / 2.0f;
     subSurfaceModel = glm::translate(subSurfaceModel, position + glm::vec3(0.0f, subSurfaceY, -subSurfaceZOffset));
     subSurfaceModel = glm::scale(subSurfaceModel, glm::vec3(subSurfaceWidth, subSurfaceThickness, subSurfaceDepth));
     shader.setMat4("model", subSurfaceModel);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-    // 3. PANELS (perpendicular, 1.0f thick)
-    // Positioned at the front of the table
+    // 3. PANELS
     float frontPanelY = (tableHeight - mainSurfaceThickness + subSurfaceY - subSurfaceThickness / 2.0f) / 2.0f;
     float frontPanelHeight_calc = (tableHeight - mainSurfaceThickness) - (subSurfaceY - subSurfaceThickness / 2.0f);
 
@@ -515,54 +436,44 @@ void renderDesk(GLuint cubeVAO, GLuint planeVAO, Shader& shader, glm::mat4& view
     shader.setMat4("model", frontPanelModel);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-   
-	//Positioned at the left side of the table
-	glm::mat4 leftPanelModel = glm::mat4(1.0f);
-	leftPanelModel = glm::translate(leftPanelModel, position + glm::vec3(-mainSurfaceWidth / 2.0f + frontPanelThickness / 2.0f, frontPanelY, 0.0f));
-	leftPanelModel = glm::scale(leftPanelModel, glm::vec3(frontPanelThickness, frontPanelHeight_calc, mainSurfaceDepth));
-	shader.setMat4("model", leftPanelModel);
-	glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+    glm::mat4 leftPanelModel = glm::mat4(1.0f);
+    leftPanelModel = glm::translate(leftPanelModel, position + glm::vec3(-mainSurfaceWidth / 2.0f + frontPanelThickness / 2.0f, frontPanelY, 0.0f));
+    leftPanelModel = glm::scale(leftPanelModel, glm::vec3(frontPanelThickness, frontPanelHeight_calc, mainSurfaceDepth));
+    shader.setMat4("model", leftPanelModel);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-	//Positioned at the right side of the table
-	glm::mat4 rightPanelModel = glm::mat4(1.0f);
-	rightPanelModel = glm::translate(rightPanelModel, position + glm::vec3(mainSurfaceWidth / 2.0f - frontPanelThickness / 2.0f, frontPanelY, 0.0f));
-	rightPanelModel = glm::scale(rightPanelModel, glm::vec3(frontPanelThickness, frontPanelHeight_calc, mainSurfaceDepth));
-	shader.setMat4("model", rightPanelModel);
-	glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+    glm::mat4 rightPanelModel = glm::mat4(1.0f);
+    rightPanelModel = glm::translate(rightPanelModel, position + glm::vec3(mainSurfaceWidth / 2.0f - frontPanelThickness / 2.0f, frontPanelY, 0.0f));
+    rightPanelModel = glm::scale(rightPanelModel, glm::vec3(frontPanelThickness, frontPanelHeight_calc, mainSurfaceDepth));
+    shader.setMat4("model", rightPanelModel);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-
-
-    // 4. FOUR LEGS (stands at four corners)
-    // Calculate leg positions at the four corners
+    // 4. FOUR LEGS
     float legOffsetX = mainSurfaceWidth / 2.0f - legWidth / 2.0f;
     float frontlegOffsetZ = mainSurfaceDepth / 2.0f - legWidth / 2.0f;
-    float backlegOffsetZ = subSurfaceDepth / 2.0f -  legWidth * 4.0f;
-    float legHeight = subSurfaceY - subSurfaceThickness / 2.0f; // From floor to bottom of sub-surface
+    float backlegOffsetZ = subSurfaceDepth / 2.0f - legWidth * 4.0f;
+    float legHeight = subSurfaceY - subSurfaceThickness / 2.0f;
 
-    // Front-left leg
     glm::mat4 leg1Model = glm::mat4(1.0f);
     leg1Model = glm::translate(leg1Model, position + glm::vec3(-legOffsetX, legHeight / 2.0f, frontlegOffsetZ));
     leg1Model = glm::scale(leg1Model, glm::vec3(legWidth, legHeight, legWidth));
     shader.setMat4("model", leg1Model);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-    // Front-right leg
     glm::mat4 leg2Model = glm::mat4(1.0f);
     leg2Model = glm::translate(leg2Model, position + glm::vec3(legOffsetX, legHeight / 2.0f, frontlegOffsetZ));
     leg2Model = glm::scale(leg2Model, glm::vec3(legWidth, legHeight, legWidth));
     shader.setMat4("model", leg2Model);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-    // Back-left leg
     glm::mat4 leg3Model = glm::mat4(1.0f);
-    leg3Model = glm::translate(leg3Model, position + glm::vec3(-legOffsetX, legHeight / 2.0f, - backlegOffsetZ));
+    leg3Model = glm::translate(leg3Model, position + glm::vec3(-legOffsetX, legHeight / 2.0f, -backlegOffsetZ));
     leg3Model = glm::scale(leg3Model, glm::vec3(legWidth, legHeight, legWidth));
     shader.setMat4("model", leg3Model);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
 
-    // Back-right leg
     glm::mat4 leg4Model = glm::mat4(1.0f);
-    leg4Model = glm::translate(leg4Model, position + glm::vec3(legOffsetX, legHeight / 2.0f, - backlegOffsetZ));
+    leg4Model = glm::translate(leg4Model, position + glm::vec3(legOffsetX, legHeight / 2.0f, -backlegOffsetZ));
     leg4Model = glm::scale(leg4Model, glm::vec3(legWidth, legHeight, legWidth));
     shader.setMat4("model", leg4Model);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
@@ -574,15 +485,12 @@ void renderCeilingFan(GLuint cubeVAO, GLuint cylinderVAO, Shader& shader, glm::m
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
 
-    // Fan position (center of the classroom, lower so we can see it better)
-    glm::vec3 fanPosition(0.0f, 8.5f, 0.0f); // Lowered from 8.5 to 7.0
+    glm::vec3 fanPosition(0.0f, 8.5f, 0.0f);
 
-    float fanSpeed = 2.0f; // Adjust speed here (revolutions per second)
-    float rotation = currentTime * fanSpeed * 360.0f; // Convert to degrees
+    float fanSpeed = 2.0f;
+    float rotation = currentTime * fanSpeed * 360.0f;
 
-    // ============================================
-    // CEILING ROD (stationary, connects ceiling to fan)
-    // ============================================
+    // CEILING ROD
     shader.setVec3("material.ambient", 0.15f, 0.15f, 0.15f);
     shader.setVec3("material.diffuse", 0.25f, 0.25f, 0.25f);
     shader.setVec3("material.specular", 0.4f, 0.4f, 0.4f);
@@ -590,14 +498,12 @@ void renderCeilingFan(GLuint cubeVAO, GLuint cylinderVAO, Shader& shader, glm::m
 
     glBindVertexArray(cylinderVAO);
     glm::mat4 ceilingRodModel = glm::mat4(1.0f);
-    ceilingRodModel = glm::translate(ceilingRodModel, glm::vec3(0.0f, (10.0f + fanPosition.y) / 2.0f, 0.0f)); // Between ceiling and fan
-    ceilingRodModel = glm::scale(ceilingRodModel, glm::vec3(0.15f, 10.0f - fanPosition.y, 0.15f)); // Thick rod from ceiling to fan
+    ceilingRodModel = glm::translate(ceilingRodModel, glm::vec3(0.0f, (10.0f + fanPosition.y) / 2.0f, 0.0f));
+    ceilingRodModel = glm::scale(ceilingRodModel, glm::vec3(0.15f, 10.0f - fanPosition.y, 0.15f));
     shader.setMat4("model", ceilingRodModel);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CYLINDER));
 
-    // ============================================
-    // CENTRAL DISK (spinning, grey-white)
-    // ============================================
+    // CENTRAL DISK
     shader.setVec3("material.ambient", 0.7f, 0.7f, 0.7f);
     shader.setVec3("material.diffuse", 0.85f, 0.85f, 0.85f);
     shader.setVec3("material.specular", 0.9f, 0.9f, 0.9f);
@@ -606,21 +512,17 @@ void renderCeilingFan(GLuint cubeVAO, GLuint cylinderVAO, Shader& shader, glm::m
     glBindVertexArray(cylinderVAO);
     glm::mat4 diskModel = glm::mat4(1.0f);
     diskModel = glm::translate(diskModel, fanPosition);
-    diskModel = glm::rotate(diskModel, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f)); // Spin with blades
-    diskModel = glm::scale(diskModel, glm::vec3(1.5f, 0.3f, 1.5f)); // Flat disk shape
+    diskModel = glm::rotate(diskModel, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+    diskModel = glm::scale(diskModel, glm::vec3(1.5f, 0.3f, 1.5f));
     shader.setMat4("model", diskModel);
     glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CYLINDER));
 
-    // ============================================
-    // CONNECTOR STICKS AND BLADES (spinning together)
-    // ============================================
-
+    // CONNECTOR STICKS AND BLADES
     for (int i = 0; i < 3; i++)
     {
-        float angle = rotation + (i * 120.0f); // 120 degrees apart (360/3)
+        float angle = rotation + (i * 120.0f);
 
-        // CONNECTOR STICK (small cylinder from disk to blade)
-        // Dark grey color for connectors
+        // CONNECTOR STICK
         shader.setVec3("material.ambient", 0.2f, 0.2f, 0.2f);
         shader.setVec3("material.diffuse", 0.35f, 0.35f, 0.35f);
         shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -628,15 +530,15 @@ void renderCeilingFan(GLuint cubeVAO, GLuint cylinderVAO, Shader& shader, glm::m
 
         glBindVertexArray(cylinderVAO);
         glm::mat4 connectorModel = glm::mat4(1.0f);
-        connectorModel = glm::translate(connectorModel, fanPosition); // Start at center
-        connectorModel = glm::rotate(connectorModel, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around Y
-        connectorModel = glm::translate(connectorModel, glm::vec3(1.2f, 0.0f, 0.0f)); // Position between disk and blade
-        connectorModel = glm::rotate(connectorModel, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate to horizontal
-        connectorModel = glm::scale(connectorModel, glm::vec3(0.1f, 0.5f, 0.1f)); // Small thin stick
+        connectorModel = glm::translate(connectorModel, fanPosition);
+        connectorModel = glm::rotate(connectorModel, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+        connectorModel = glm::translate(connectorModel, glm::vec3(1.2f, 0.0f, 0.0f));
+        connectorModel = glm::rotate(connectorModel, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        connectorModel = glm::scale(connectorModel, glm::vec3(0.1f, 0.5f, 0.1f));
         shader.setMat4("model", connectorModel);
         glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CYLINDER));
 
-        // BLADE (grey-white)
+        // BLADE
         shader.setVec3("material.ambient", 0.7f, 0.7f, 0.7f);
         shader.setVec3("material.diffuse", 0.85f, 0.85f, 0.85f);
         shader.setVec3("material.specular", 0.9f, 0.9f, 0.9f);
@@ -644,15 +546,143 @@ void renderCeilingFan(GLuint cubeVAO, GLuint cylinderVAO, Shader& shader, glm::m
 
         glBindVertexArray(cubeVAO);
         glm::mat4 bladeModel = glm::mat4(1.0f);
-        bladeModel = glm::translate(bladeModel, fanPosition); // Start at center
-        bladeModel = glm::rotate(bladeModel, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around Y
-        bladeModel = glm::translate(bladeModel, glm::vec3(2.5f, 0.0f, 0.0f)); // Move blade out from center
-        bladeModel = glm::scale(bladeModel, glm::vec3(2.5f, 0.08f, 0.6f)); // Slim, long blade
+        bladeModel = glm::translate(bladeModel, fanPosition);
+        bladeModel = glm::rotate(bladeModel, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+        bladeModel = glm::translate(bladeModel, glm::vec3(2.5f, 0.0f, 0.0f));
+        bladeModel = glm::scale(bladeModel, glm::vec3(2.5f, 0.08f, 0.6f));
 
         shader.setMat4("model", bladeModel);
         glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
     }
 }
+
+void renderBench(
+    GLuint cubeVAO,
+    Shader& shader,
+    glm::mat4& view,
+    glm::mat4& projection,
+    glm::vec3 position,
+    float benchWidth = 11.0f,
+    float benchDepth = 1.5f,
+    float benchHeight = 1.5f,
+    float legWidth = 0.1f,
+    float legHeight = 1.5f
+) {
+    shader.use();
+    shader.setMat4("projection", projection);
+    shader.setMat4("view", view);
+
+    glm::vec3 benchAmbient(0.2f, 0.13f, 0.07f);
+    glm::vec3 benchDiffuse(0.4f, 0.25f, 0.13f);
+    glm::vec3 benchSpecular(0.2f, 0.13f, 0.07f);
+
+    shader.setVec3("material.ambient", benchAmbient);
+    shader.setVec3("material.diffuse", benchDiffuse);
+    shader.setVec3("material.specular", benchSpecular);
+    shader.setFloat("material.shininess", 16.0f);
+    shader.setFloat("material.alpha", 1.0f);
+
+    glBindVertexArray(cubeVAO);
+    glm::mat4 seatModel = glm::mat4(1.0f);
+    seatModel = glm::translate(seatModel, position + glm::vec3(0.0f, benchHeight, 0.0f));
+    seatModel = glm::scale(seatModel, glm::vec3(benchWidth, 0.1f, benchDepth));
+    shader.setMat4("model", seatModel);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+
+    float xOffset = benchWidth / 2.0f - legWidth / 2.0f;
+    float zOffset = benchDepth / 2.0f - legWidth / 2.0f;
+    float yOffset = legHeight / 2.0f;
+
+    for (int sx = -1; sx <= 1; sx += 2) {
+        for (int sz = -1; sz <= 1; sz += 2) {
+            glm::mat4 legModel = glm::mat4(1.0f);
+            legModel = glm::translate(legModel, position + glm::vec3(sx * xOffset, yOffset, sz * zOffset));
+            legModel = glm::scale(legModel, glm::vec3(legWidth, legHeight, legWidth));
+            shader.setMat4("model", legModel);
+            glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+        }
+    }
+}
+
+void renderBlackBoard(GLuint cubeVAO, Shader& shader, glm::mat4& view, glm::mat4& projection, glm::vec3 position)
+{
+    shader.use();
+    shader.setMat4("projection", projection);
+    shader.setMat4("view", view);
+
+    // Blackboard dimensions
+    float boardWidth = 25.0f;
+    float boardHeight = 8.0f;
+    float boardThickness = 0.15f;
+    float frameThickness = 0.2f;
+
+    // Dark green/black color for the board surface
+    glm::vec3 boardAmbient(0.05f, 0.1f, 0.05f);
+    glm::vec3 boardDiffuse(0.1f, 0.2f, 0.1f);
+    glm::vec3 boardSpecular(0.05f, 0.05f, 0.05f);
+
+    // Brown color for the wooden frame
+    glm::vec3 frameAmbient(0.3f, 0.2f, 0.1f);
+    glm::vec3 frameDiffuse(0.5f, 0.3f, 0.15f);
+    glm::vec3 frameSpecular(0.2f, 0.15f, 0.1f);
+
+    glBindVertexArray(cubeVAO);
+
+    // Main blackboard surface
+    shader.setVec3("material.ambient", boardAmbient);
+    shader.setVec3("material.diffuse", boardDiffuse);
+    shader.setVec3("material.specular", boardSpecular);
+    shader.setFloat("material.alpha", 1.0f);
+
+    glm::mat4 boardModel = glm::mat4(1.0f);
+    boardModel = glm::translate(boardModel, position);
+    boardModel = glm::scale(boardModel, glm::vec3(boardWidth, boardHeight, boardThickness));
+    shader.setMat4("model", boardModel);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+
+    // Wooden frame around the blackboard
+    shader.setVec3("material.ambient", frameAmbient);
+    shader.setVec3("material.diffuse", frameDiffuse);
+    shader.setVec3("material.specular", frameSpecular);
+    shader.setFloat("material.alpha", 1.0f);
+
+    // Top frame
+    glm::mat4 topFrame = glm::mat4(1.0f);
+    topFrame = glm::translate(topFrame, position + glm::vec3(0.0f, boardHeight / 2.0f + frameThickness / 2.0f, 0.0f));
+    topFrame = glm::scale(topFrame, glm::vec3(boardWidth + 2.0f * frameThickness, frameThickness, boardThickness + 0.1f));
+    shader.setMat4("model", topFrame);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+
+    // Bottom frame
+    glm::mat4 bottomFrame = glm::mat4(1.0f);
+    bottomFrame = glm::translate(bottomFrame, position + glm::vec3(0.0f, -boardHeight / 2.0f - frameThickness / 2.0f, 0.0f));
+    bottomFrame = glm::scale(bottomFrame, glm::vec3(boardWidth + 2.0f * frameThickness, frameThickness, boardThickness + 0.1f));
+    shader.setMat4("model", bottomFrame);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+
+    // Left frame
+    glm::mat4 leftFrame = glm::mat4(1.0f);
+    leftFrame = glm::translate(leftFrame, position + glm::vec3(-boardWidth / 2.0f - frameThickness / 2.0f, 0.0f, 0.0f));
+    leftFrame = glm::scale(leftFrame, glm::vec3(frameThickness, boardHeight, boardThickness + 0.1f));
+    shader.setMat4("model", leftFrame);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+
+    // Right frame
+    glm::mat4 rightFrame = glm::mat4(1.0f);
+    rightFrame = glm::translate(rightFrame, position + glm::vec3(boardWidth / 2.0f + frameThickness / 2.0f, 0.0f, 0.0f));
+    rightFrame = glm::scale(rightFrame, glm::vec3(frameThickness, boardHeight, boardThickness + 0.1f));
+    shader.setMat4("model", rightFrame);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+
+    // Chalk tray at the bottom
+    glm::mat4 chalkTray = glm::mat4(1.0f);
+    chalkTray = glm::translate(chalkTray, position + glm::vec3(0.0f, -boardHeight / 2.0f - frameThickness - 0.15f, 0.1f));
+    chalkTray = glm::scale(chalkTray, glm::vec3(boardWidth, 0.1f, 0.3f));
+    shader.setMat4("model", chalkTray);
+    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
+}
+
+
 int main()
 {
     // Initialize GLFW
@@ -677,15 +707,12 @@ int main()
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
     glEnable(GL_DEPTH_TEST);
 
-    // Enable blending for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Build shaders
     Shader lightingShader(vertexShaderSource, lightingFragmentShaderSource);
     Shader lightCubeShader(vertexShaderSource, lightCubeFragmentShaderSource);
 
-    // Setup Cube VAO (for classroom)
     GLuint cubeVAO, cubeVBO;
     glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &cubeVBO);
@@ -703,7 +730,6 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // Setup Plane VAO (for floor)
     GLuint planeVAO, planeVBO;
     glGenVertexArrays(1, &planeVAO);
     glGenBuffers(1, &planeVBO);
@@ -721,7 +747,6 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // Setup Sphere VAO (for sun)
     GLuint sphereVAO, sphereVBO;
     glGenVertexArrays(1, &sphereVAO);
     glGenBuffers(1, &sphereVBO);
@@ -739,7 +764,6 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // Setup Window VAO
     GLuint windowVAO, windowVBO;
     glGenVertexArrays(1, &windowVAO);
     glGenBuffers(1, &windowVBO);
@@ -760,15 +784,11 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-
-    // Setup Cylinder VAO (for fan pillar)
     GLuint cylinderVAO, cylinderVBO;
     glGenVertexArrays(1, &cylinderVAO);
     glGenBuffers(1, &cylinderVBO);
 
     const auto& cylinderVerts = Mesh::GetVertices(Mesh::CYLINDER);
-    std::cout << "Cylinder vertex count: " << Mesh::GetVertexCount(Mesh::CYLINDER) << std::endl;
-    std::cout << "Cylinder vertices size: " << cylinderVerts.size() << std::endl;
 
     glBindVertexArray(cylinderVAO);
     glBindBuffer(GL_ARRAY_BUFFER, cylinderVBO);
@@ -781,25 +801,20 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // Setup sun animator - sun moves slowly in the sky
     sunAnimator = new ObjectAnimator(glm::vec3(30.0f, 20.0f, -50.0f));
     sunAnimator->setAnimationType(CIRCULAR);
     sunAnimator->setRadius(15.0f);
     sunAnimator->setSpeed(0.1f);
     sunAnimator->setCenter(glm::vec3(0.0f, 20.0f, -50.0f));
-    sunAnimator->setAxis(glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around Z-axis
+    sunAnimator->setAxis(glm::vec3(0.0f, 0.0f, 1.0f));
 
-
-    // Define ceiling light positions (inside the classroom)
     glm::vec3 ceilingLightPositions[4] = {
-        glm::vec3(-10.0f, 9.5f, -10.0f),   // Back-left
-        glm::vec3(10.0f, 9.5f, -10.0f),    // Back-right
-        glm::vec3(-10.0f, 9.5f, 10.0f),    // Front-left
-        glm::vec3(10.0f, 9.5f, 10.0f)      // Front-right
+        glm::vec3(-10.0f, 9.5f, -10.0f),
+        glm::vec3(10.0f, 9.5f, -10.0f),
+        glm::vec3(-10.0f, 9.5f, 10.0f),
+        glm::vec3(10.0f, 9.5f, 10.0f)
     };
 
-
-    // Render loop
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
@@ -808,25 +823,21 @@ int main()
 
         processInput(window);
 
-        glClearColor(0.5f, 0.7f, 0.9f, 1.0f); // Sky blue background
+        glClearColor(0.5f, 0.7f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Update sun position
         glm::vec3 sunPosition = sunAnimator->update(currentFrame);
 
-        // Setup lighting shader
         lightingShader.use();
         lightingShader.setVec3("viewPos", camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
-        // Directional light (sun direction)
         glm::vec3 sunDirection = glm::normalize(glm::vec3(0.0f, 0.0f, 0.0f) - sunPosition);
         lightingShader.setVec3("dirLight.direction", sunDirection);
         lightingShader.setVec3("dirLight.ambient", 0.3f, 0.3f, 0.3f);
         lightingShader.setVec3("dirLight.diffuse", 0.8f, 0.8f, 0.7f);
         lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-        // Point lights (ceiling lights)
         for (int i = 0; i < 4; i++)
         {
             std::string number = std::to_string(i);
@@ -845,13 +856,11 @@ int main()
                 lightingShader.setVec3("pointLights[" + number + "].specular", 0.0f, 0.0f, 0.0f);
             }
 
-
             lightingShader.setFloat("pointLights[" + number + "].constant", 1.0f);
             lightingShader.setFloat("pointLights[" + number + "].linear", 0.045f);
             lightingShader.setFloat("pointLights[" + number + "].quadratic", 0.0075f);
         }
 
-        // Spotlight (disabled)
         lightingShader.setVec3("spotLight.position", glm::vec3(0.0f));
         lightingShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
         lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -868,25 +877,31 @@ int main()
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // Render the scene
         renderScene(cubeVAO, planeVAO, sphereVAO, windowVAO, lightingShader, view, projection);
 
-        // Draw the ceiling light fixtures
+        // Render the blackboard on the front wall, left side with 10.0f offset
+        float classroomDepth = 50.0f;
+        float frontZ = classroomDepth / 2.0f;
+        renderBlackBoard(
+            cubeVAO,
+            lightingShader,
+            view,
+            projection,
+            glm::vec3(10.0f, 8.0f, frontZ - 0.2f)
+        );
+
         renderCeilingLights(cubeVAO, lightCubeShader, view, projection, ceilingLightPositions, lightsOn);
 
-        // Draw the ceiling fan
         renderCeilingFan(cubeVAO, cylinderVAO, lightingShader, view, projection, currentFrame);
 
-        // Draw desks in the classroom (larger desks need more spacing)
-        
         const int numRows = 6;
-		const int numCols = 2;
-		const int numDesksInACell = 3; // Two desks per cell
+        const int numCols = 2;
+        const int numDesksInACell = 3;
         const float rowSpacing = 6.0f;
-        const float colSpacing = 4.0f;
+        const float colSpacing = 10.0f;
         const float pairSpacing = 0.5f;
-        const float startX = -15.0f;
-		const float startZ = -15.0f;
+        const float startX = -20.0f;
+        const float startZ = -15.0f;
         const float tableSizeX = 5.0f;
 
         float deskStride = tableSizeX + pairSpacing;
@@ -896,11 +911,28 @@ int main()
         {
             for (int col = 0; col < numCols; col++)
             {
+                renderBench(
+                    cubeVAO,
+                    lightingShader,
+                    view,
+                    projection,
+                    glm::vec3(
+                        startX
+                        + col * (columnWidth + colSpacing)
+                        + (columnWidth - pairSpacing) / 2.0f
+                        - deskStride / 2.0f,
+                        0.0f,
+                        startZ
+                        + row * rowSpacing
+                        - rowSpacing / 2.0f
+                    ),
+                    columnWidth
+                );
                 for (int i = 0; i < numDesksInACell; i++)
                 {
                     float x = startX
-                        + col * (columnWidth + colSpacing)     // move to column start
-                        + i * deskStride;       // desk offset inside column
+                        + col * (columnWidth + colSpacing)
+                        + i * deskStride;
 
                     float z = startZ
                         + row * rowSpacing;
@@ -917,21 +949,16 @@ int main()
             }
         }
 
-
-   
-
-        // Draw the sun as a bright sphere
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
 
-        // Set sun color (bright yellow-white)
         lightCubeShader.setVec3("lightColor", 1.0f, 1.0f, 0.8f);
 
         glBindVertexArray(sphereVAO);
         glm::mat4 sunModel = glm::mat4(1.0f);
         sunModel = glm::translate(sunModel, sunPosition);
-        sunModel = glm::scale(sunModel, glm::vec3(5.0f)); // Large sun
+        sunModel = glm::scale(sunModel, glm::vec3(5.0f));
         lightCubeShader.setMat4("model", sunModel);
         glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::SPHERE));
 
@@ -959,8 +986,6 @@ int main()
     return 0;
 }
 
-
-
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -975,7 +1000,6 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
-    // Toggle lights with C key
     static bool cKeyPressed = false;
     if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && !cKeyPressed)
     {
@@ -1008,48 +1032,4 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}
-void drawWallBlock(
-    Shader& shader,
-    GLuint cubeVAO,
-    glm::vec3 position,
-    glm::vec3 scale
-) {
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::scale(model, scale);
-    shader.setMat4("model", model);
-    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-}
-
-inline void drawFrameBlock(
-    Shader& shader,
-    GLuint cubeVAO,
-    const glm::vec3& position,
-    const glm::vec3& scale
-) {
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::scale(model, scale);
-    shader.setMat4("model", model);
-    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::CUBE));
-}
-
-inline void drawWindowPanel(
-    Shader& shader,
-    GLuint windowVAO,
-    const glm::vec3& position,
-    const glm::vec3& scale,
-    float rotationY = 0.0f
-) {
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-
-    if (rotationY != 0.0f) {
-        model = glm::rotate(model, glm::radians(rotationY), glm::vec3(0.0f, 1.0f, 0.0f));
-    }
-
-    model = glm::scale(model, scale);
-    shader.setMat4("model", model);
-    glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::WINDOW));
 }
