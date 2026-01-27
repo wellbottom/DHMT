@@ -144,7 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="config.cpp" />
     <ClCompile Include="config_hastexture.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />

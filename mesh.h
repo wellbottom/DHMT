@@ -12,7 +12,9 @@ public:
         PLANE,
         SPHERE,
         TETRAHEDRON,
-        PENTAHEDRON
+        PENTAHEDRON,
+        WINDOW,
+        CYLINDER
     };
 
 

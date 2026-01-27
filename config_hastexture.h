@@ -14,12 +14,17 @@ static const char* vertexShaderSource =
 "uniform mat4 model;\n"
 "uniform mat4 view;\n"
 "uniform mat4 projection;\n"
+"uniform float texRotation;\n"
 "\n"
 "void main()\n"
 "{\n"
 "    FragPos = vec3(model * vec4(aPos, 1.0));\n"
 "    Normal = mat3(transpose(inverse(model))) * aNormal;\n"
-"    TexCoords = aTexCoords;\n"
+"	 vec2 center = aTexCoords - 0.5;\n"
+"	 float cosA = cos(texRotation);\n"
+"	 float sinA = sin(texRotation);\n"
+"	 mat2 rotMat = mat2(cosA, -sinA, sinA, cosA);\n"
+"    TexCoords =  rotMat * aTexCoords ;\n"
 "    gl_Position = projection * view * vec4(FragPos, 1.0);\n"
 "}\n\0";
 

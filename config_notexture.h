@@ -1,5 +1,3 @@
-
-
 #ifndef CONFIG_NOTEXTURE_H
 #define CONFIG_NOTEXTURE_H
 
@@ -32,11 +30,11 @@ static const char* vertexShaderSource =
 static const char* lightCubeFragmentShaderSource =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
+"uniform vec3 lightColor;\n"  // Added uniform for color control
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0);\n"
+"   FragColor = vec4(lightColor, 1.0);\n"  // Uses uniform color
 "}\n\0";
-
 static const char* lightingFragmentShaderSource =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
@@ -46,6 +44,7 @@ static const char* lightingFragmentShaderSource =
 "    vec3 diffuse;\n"
 "    vec3 specular;\n"
 "    float shininess;\n"
+"    float alpha;\n"  // Added alpha channel
 "};\n"
 "\n"
 "struct DirLight {\n"
@@ -105,7 +104,7 @@ static const char* lightingFragmentShaderSource =
 "    // add spot light contribution\n"
 "    result += CalcSpotLight(spotLight, norm, FragPos, viewDir);\n"
 "\n"
-"    FragColor = vec4(result, 1.0);\n"
+"    FragColor = vec4(result, material.alpha);\n"  // Use alpha from material
 "}\n"
 "\n"
 "vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)\n"
