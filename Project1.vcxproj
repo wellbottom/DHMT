@@ -144,21 +144,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="ClassroomObjects.cpp" />
     <ClCompile Include="config_hastexture.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="ObjectAnimator.cpp" />
+    <ClCompile Include="RenderUtils.cpp" />
+    <ClCompile Include="SceneConfig.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="ClassroomObjects.h" />
     <ClInclude Include="config_hastexture.h" />
     <ClInclude Include="config_notexture.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="ObjectAnimator.h" />
+    <ClInclude Include="RenderUtils.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SceneConfig.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
