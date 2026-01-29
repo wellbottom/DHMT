@@ -53,10 +53,10 @@ void setupLightingWithTexture(Shader& shader, const Camera& camera);
 
 //A few texture:
 namespace TexturePaths {
-    const char* FLOOR_TEXTURE_PATH = "C:\\OpenGL\\Project1\\Images\\floor.jpg";
-    const char* WALL_TEXTURE_PATH = "C:\\OpenGL\\Project1\\Images\\road.jpg";
-    const char* TET_PATH = "C:\\OpenGL\\Project1\\Images\\Tet.png";
-    const char* TET1_PATH = "C:\\OpenGL\\Project1\\Images\\Tet1.jpg";
+    const char* FLOOR_TEXTURE_PATH = "Images/floor.jpg";
+    const char* WALL_TEXTURE_PATH = "Images/road.jpg";
+    const char* TET_PATH = "Images/Tet.png";
+    const char* TET1_PATH = "Images/Tet1.jpg";
 }
 
 // ============================================================================
