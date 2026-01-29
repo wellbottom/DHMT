@@ -626,3 +626,136 @@ void ClassroomObjects::renderPoster(
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);  // Plane has 6 vertices (2 triangles)
 }
+
+void ClassroomObjects::renderTeacherDesk(
+    GLuint cubeVAO,
+    GLuint planeVAO,
+    Shader& shader,
+    glm::mat4& view,
+    glm::mat4& projection,
+    glm::vec3 position
+) {
+    using namespace TeacherDeskDimensions;
+
+    shader.use();
+    shader.setMat4("projection", projection);
+    shader.setMat4("view", view);
+
+    // Main desk surface
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(0.0f, HEIGHT - MAIN_THICKNESS / 2.0f, 0.0f),
+        glm::vec3(MAIN_WIDTH, MAIN_THICKNESS, MAIN_DEPTH),
+        Colors::WOOD_AMBIENT, Colors::WOOD_DIFFUSE, Colors::WOOD_SPECULAR
+    );
+
+    // Front panel
+    float frontPanelY = HEIGHT / 2.0f;
+
+    // Back panel
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(0.0f, frontPanelY, -MAIN_DEPTH / 2.0f + PANEL_THICKNESS / 2.0f),
+        glm::vec3(MAIN_WIDTH, HEIGHT - MAIN_THICKNESS, PANEL_THICKNESS),
+        Colors::WOOD_AMBIENT, Colors::WOOD_DIFFUSE, Colors::WOOD_SPECULAR
+    );
+
+    // Left panel (partial - leaves space for drawer)
+    float leftPanelWidth = MAIN_DEPTH - DRAWER_DEPTH - 0.4f;
+    float leftPanelZ = MAIN_DEPTH / 2.0f - leftPanelWidth / 2.0f - 0.2f;
+
+
+    // Left panel bottom section (below drawer)
+    float leftPanelBottomZ = -MAIN_DEPTH / 2.0f + leftPanelWidth / 2.0f + 0.2f;
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(-MAIN_WIDTH / 2.0f + PANEL_THICKNESS / 2.0f, frontPanelY, leftPanelBottomZ),
+        glm::vec3(PANEL_THICKNESS, HEIGHT - MAIN_THICKNESS, leftPanelWidth),
+        Colors::WOOD_AMBIENT, Colors::WOOD_DIFFUSE, Colors::WOOD_SPECULAR
+    );
+
+    // Left panel - above drawer section
+    float aboveDrawerHeight = HEIGHT - MAIN_THICKNESS - DRAWER_HEIGHT - 0.3f;
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(-MAIN_WIDTH / 2.0f + PANEL_THICKNESS / 2.0f, HEIGHT - MAIN_THICKNESS - aboveDrawerHeight / 2.0f, 0.0f),
+        glm::vec3(PANEL_THICKNESS, aboveDrawerHeight, DRAWER_DEPTH),
+        Colors::WOOD_AMBIENT, Colors::WOOD_DIFFUSE, Colors::WOOD_SPECULAR
+    );
+
+    // Right panel (full)
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(MAIN_WIDTH / 2.0f - PANEL_THICKNESS / 2.0f, frontPanelY, 0.0f),
+        glm::vec3(PANEL_THICKNESS, HEIGHT - MAIN_THICKNESS, MAIN_DEPTH),
+        Colors::WOOD_AMBIENT, Colors::WOOD_DIFFUSE, Colors::WOOD_SPECULAR
+    );
+
+    // Drawer assembly (30% of desk width, on left side)
+    float drawerY = HEIGHT - MAIN_THICKNESS - DRAWER_HEIGHT / 2.0f - 0.15f;
+    float drawerX = DRAWER_X_OFFSET;
+
+    // Drawer front face (facing right, into the room)
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(drawerX + DRAWER_WIDTH / 2.0f - DRAWER_THICKNESS / 2.0f, drawerY, 0.0f),
+        glm::vec3(DRAWER_THICKNESS, DRAWER_HEIGHT, DRAWER_DEPTH),
+        Colors::WOOD_AMBIENT * 0.9f, Colors::WOOD_DIFFUSE * 0.9f, Colors::WOOD_SPECULAR
+    );
+
+    // Drawer back (against left wall of desk)
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(drawerX - DRAWER_WIDTH / 2.0f + DRAWER_THICKNESS / 2.0f, drawerY, 0.0f),
+        glm::vec3(DRAWER_THICKNESS, DRAWER_HEIGHT, DRAWER_DEPTH),
+        Colors::WOOD_AMBIENT * 0.9f, Colors::WOOD_DIFFUSE * 0.9f, Colors::WOOD_SPECULAR
+    );
+
+    // Drawer front side (toward front of desk)
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(drawerX, drawerY, DRAWER_DEPTH / 2.0f - DRAWER_THICKNESS / 2.0f),
+        glm::vec3(DRAWER_WIDTH, DRAWER_HEIGHT, DRAWER_THICKNESS),
+        Colors::WOOD_AMBIENT * 0.9f, Colors::WOOD_DIFFUSE * 0.9f, Colors::WOOD_SPECULAR
+    );
+
+    // Drawer back side (toward back of desk)
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(drawerX, drawerY, -DRAWER_DEPTH / 2.0f + DRAWER_THICKNESS / 2.0f),
+        glm::vec3(DRAWER_WIDTH, DRAWER_HEIGHT, DRAWER_THICKNESS),
+        Colors::WOOD_AMBIENT * 0.9f, Colors::WOOD_DIFFUSE * 0.9f, Colors::WOOD_SPECULAR
+    );
+
+
+
+    // Drawer handle (on front face, facing right)
+    RenderUtils::renderCube(
+        cubeVAO, shader,
+        position + glm::vec3(drawerX, drawerY, DRAWER_DEPTH / 2.0f - DRAWER_THICKNESS / 2.0f),
+        glm::vec3(0.1f, 0.1f, 0.3f),
+        Colors::METAL_DARK_AMBIENT, Colors::METAL_DARK_DIFFUSE, Colors::METAL_DARK_SPECULAR
+    );
+
+    // Four legs
+    float legOffsetX = MAIN_WIDTH / 2.0f - LEG_WIDTH / 2.0f - 0.1f;
+    float legOffsetZ = MAIN_DEPTH / 2.0f - LEG_WIDTH / 2.0f - 0.1f;
+    float legHeight = HEIGHT - MAIN_THICKNESS;
+
+    // Leg positions
+    glm::vec3 legPositions[4] = {
+        position + glm::vec3(-legOffsetX, legHeight / 2.0f, legOffsetZ),
+        position + glm::vec3(legOffsetX, legHeight / 2.0f, legOffsetZ),
+        position + glm::vec3(-legOffsetX, legHeight / 2.0f, -legOffsetZ),
+        position + glm::vec3(legOffsetX, legHeight / 2.0f, -legOffsetZ)
+    };
+
+    for (int i = 0; i < 4; i++) {
+        RenderUtils::renderCube(
+            cubeVAO, shader,
+            legPositions[i],
+            glm::vec3(LEG_WIDTH, legHeight, LEG_WIDTH),
+            Colors::WOOD_AMBIENT, Colors::WOOD_DIFFUSE, Colors::WOOD_SPECULAR
+        );
+    }
+}

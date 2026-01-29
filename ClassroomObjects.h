@@ -116,6 +116,16 @@ public:
         float rotationDegrees = 0.0f,
         const glm::vec3& rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f)
     );
+    static void renderTeacherDesk(
+        GLuint cubeVAO,
+        GLuint planeVAO,
+        Shader& shader,
+        glm::mat4& view,
+        glm::mat4& projection,
+        glm::vec3 position
+    );
 };
+
+
 
 #endif

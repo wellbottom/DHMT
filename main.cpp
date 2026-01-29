@@ -351,6 +351,7 @@ int main()
         }
 
 
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tetPosterTex);
         glActiveTexture(GL_TEXTURE1);
@@ -368,7 +369,11 @@ int main()
             glm::vec3(1.0f, 0.0f, 0.0f) // rotationAxis
         );
 
-
+		// Teacher's desk
+        ClassroomObjects::renderTeacherDesk(
+            cubeVAO, planeVAO, lightingShader, view, projection,
+            glm::vec3(-15.0f, 0.0f, frontZ - 5.0f)  // Center front
+        );
 
         glfwSwapBuffers(window);
         glfwPollEvents();

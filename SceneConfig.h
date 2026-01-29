@@ -65,6 +65,23 @@ namespace BenchDimensions {
     const float LEG_WIDTH = 0.1f;
 }
 
+// Teacher Desk Dimensions (larger desk with drawer)
+namespace TeacherDeskDimensions {
+    const float MAIN_WIDTH = 8.0f;         // Wider than student desk
+    const float MAIN_DEPTH = 3.0f;         // Deeper than student desk
+    const float MAIN_THICKNESS = 0.25f;
+    const float HEIGHT = 3.5f;             // Slightly taller
+    const float LEG_WIDTH = 0.15f;
+    const float PANEL_THICKNESS = 0.15f;
+
+    // Drawer dimensions (30% of table width, positioned left)
+    const float DRAWER_WIDTH = MAIN_WIDTH * 0.3f;  // 30% of desk width
+    const float DRAWER_DEPTH = MAIN_DEPTH - 0.4f;  // Almost full depth
+    const float DRAWER_HEIGHT = 0.6f;
+    const float DRAWER_THICKNESS = 0.1f;
+    const float DRAWER_X_OFFSET = -MAIN_WIDTH / 2.0f + DRAWER_WIDTH / 2.0f + 0.2f;  // Left side
+}
+
 // Ceiling Fan Configuration
 namespace FanConfig {
     const glm::vec3 POSITION(0.0f, 13.5f, 0.0f);
@@ -134,7 +151,5 @@ namespace Colors {
     const glm::vec3 BENCH_DIFFUSE(0.4f, 0.25f, 0.13f);
     const glm::vec3 BENCH_SPECULAR(0.2f, 0.13f, 0.07f);
 }
-
-
 
 #endif
