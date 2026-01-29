@@ -84,8 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalUsingDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\detail;C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;C:\Users\Admin\Downloads\glm-1.0.2\glm\ext;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtx;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtc;C:\Users\Admin\Downloads\glm-1.0.2\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -116,8 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalUsingDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\Admin\Downloads\glm-1.0.2\glm\detail;C:\Users\Admin\Downloads\glm-1.0.2\glm\simd;C:\Users\Admin\Downloads\glm-1.0.2\glm\ext;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtx;C:\Users\Admin\Downloads\glm-1.0.2\glm\gtc;C:\Users\Admin\Downloads\glm-1.0.2\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>

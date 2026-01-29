@@ -11,12 +11,14 @@
 #include "camera.h"
 #include "texture.h"
 #include "config_notexture.h"
+#include "config_hastexture.h"
 #include "ObjectAnimator.h"
 
 // New modular headers
 #include "SceneConfig.h"
 #include "RenderUtils.h"
 #include "ClassroomObjects.h"
+
 
 // ============================================================================
 // GLOBAL STATE
@@ -44,6 +46,18 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void processInput(GLFWwindow* window);
 void setupLighting(Shader& lightingShader, const glm::vec3 ceilingLightPositions[4], glm::vec3 sunPosition);
+void setupLightingWithTexture(Shader& shader, const Camera& camera);
+
+
+
+
+//A few texture:
+namespace TexturePaths {
+    const char* FLOOR_TEXTURE_PATH = "C:\\OpenGL\\Project1\\Images\\floor.jpg";
+    const char* WALL_TEXTURE_PATH = "C:\\OpenGL\\Project1\\Images\\road.jpg";
+    const char* TET_PATH = "C:\\OpenGL\\Project1\\Images\\Tet.png";
+    const char* TET1_PATH = "C:\\OpenGL\\Project1\\Images\\Tet1.jpg";
+}
 
 // ============================================================================
 // MAIN FUNCTION
@@ -86,6 +100,11 @@ int main()
     // Create shaders
     Shader lightingShader(vertexShaderSource, lightingFragmentShaderSource);
     Shader lightCubeShader(vertexShaderSource, lightCubeFragmentShaderSource);
+
+	Shader lightingShader_withTexture(
+		vertexShaderSource_withTexture,
+		lightingFragmentShaderSource_withTexture
+	);
 
     // Setup VAOs and VBOs
     GLuint cubeVAO, cubeVBO;
@@ -203,6 +222,10 @@ int main()
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
+        //Setup lighting for texture shader
+
+        setupLightingWithTexture(lightingShader_withTexture, camera);
+
         // Render main scene structure
         ClassroomObjects::renderClassroomStructure(
             cubeVAO, planeVAO, windowVAO,
@@ -318,6 +341,35 @@ int main()
         lightCubeShader.setMat4("model", sunModel);
         glDrawArrays(GL_TRIANGLES, 0, Mesh::GetVertexCount(Mesh::SPHERE));
 
+
+
+        // Posters
+
+		GLuint tetPosterTex = Texture::LoadTexture(TexturePaths::TET_PATH);
+        if (tetPosterTex == 0) {
+            std::cout << "Failed to load poster texture!" << std::endl;
+        }
+
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, tetPosterTex);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, tetPosterTex);
+
+        ClassroomObjects::renderPoster(
+            planeVAO,
+            lightingShader_withTexture,
+            view,
+            projection,
+            glm::vec3(0.0f, 9.0f, -ClassroomConfig::DEPTH / 2.0f + 0.11f),
+            glm::vec3(20.0f, 1.0f, 15.0f),
+            tetPosterTex,              // textureID
+            90.0f,                      // rotationDegrees
+            glm::vec3(1.0f, 0.0f, 0.0f) // rotationAxis
+        );
+
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -388,13 +440,13 @@ void setupLighting(Shader& lightingShader, const glm::vec3 ceilingLightPositions
     lightingShader.setVec3("spotLight.direction",
         glm::normalize(glm::vec3(-12.0f, 8.0f, 24.8f) - glm::vec3(-10.0f, 12.0f, 5.0f)));
 
-	//first frame default values
+    //first frame default values
     lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
     lightingShader.setVec3("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
     lightingShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
     lightingShader.setFloat("spotLight.constant", 1.0f);
     lightingShader.setFloat("spotLight.linear", 0.09f);
-    lightingShader.setFloat("spotLight.quadratic", 0.032f); 
+    lightingShader.setFloat("spotLight.quadratic", 0.032f);
     lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
     lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
@@ -416,6 +468,78 @@ void setupLighting(Shader& lightingShader, const glm::vec3 ceilingLightPositions
         lightingShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
     }
 }
+
+
+void setupLightingWithTexture(Shader& shader, const Camera& camera)
+{
+    shader.use();
+
+    // =========================
+    // View position (REQUIRED)
+    // =========================
+    shader.setVec3("viewPos", camera.Position);
+
+    // =========================
+    // Directional light
+    // =========================
+    shader.setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+
+    shader.setVec3("dirLight.ambient", glm::vec3(1.0f));   // Low ambient, neutral color
+    shader.setVec3("dirLight.diffuse", glm::vec3(1.0f));   // Full diffuse, neutral color
+    shader.setVec3("dirLight.specular", glm::vec3(1.0f));  // Full specular, neutral color
+
+
+    // =========================
+    // Point lights (NR_POINT_LIGHTS = 4)
+    // =========================
+    glm::vec3 pointLightPositions[4] = {
+        { -6.0f, 7.5f,  6.0f },
+        {  6.0f, 7.5f,  6.0f },
+        { -6.0f, 7.5f, -6.0f },
+        {  6.0f, 7.5f, -6.0f }
+    };
+
+    for (int i = 0; i < 4; i++)
+    {
+        std::string base = "pointLights[" + std::to_string(i) + "]";
+
+        shader.setVec3(base + ".position", pointLightPositions[i]);
+        shader.setVec3(base + ".ambient", glm::vec3(0.1f));
+        shader.setVec3(base + ".diffuse", glm::vec3(0.8f));
+        shader.setVec3(base + ".specular", glm::vec3(1.0f));
+
+        shader.setFloat(base + ".constant", 1.0f);
+        shader.setFloat(base + ".linear", 0.09f);
+        shader.setFloat(base + ".quadratic", 0.032f);
+    }
+
+    // =========================
+    // Spotlight (camera-attached)
+    // =========================
+    shader.setVec3("spotLight.position", camera.Position);
+    shader.setVec3("spotLight.direction", camera.Front);
+
+    shader.setFloat("spotLight.cutOff",
+        glm::cos(glm::radians(12.5f)));
+    shader.setFloat("spotLight.outerCutOff",
+        glm::cos(glm::radians(17.5f)));
+
+    shader.setVec3("spotLight.ambient", glm::vec3(0.0f));
+    shader.setVec3("spotLight.diffuse", glm::vec3(1.0f));
+    shader.setVec3("spotLight.specular", glm::vec3(1.0f));
+
+    shader.setFloat("spotLight.constant", 1.0f);
+    shader.setFloat("spotLight.linear", 0.09f);
+    shader.setFloat("spotLight.quadratic", 0.032f);
+
+    // =========================
+    // Material (TEXTURE-BASED)
+    // =========================
+    shader.setInt("material.diffuse", 0); // GL_TEXTURE0
+    shader.setInt("material.specular", 0); // reuse diffuse
+    shader.setFloat("material.shininess", 16.0f);
+}
+
 
 // ============================================================================
 // INPUT HANDLING
@@ -505,3 +629,4 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+

@@ -103,6 +103,19 @@ public:
         glm::mat4& projection,
         glm::vec3 position
     );
+
+    // Render poster (textured plane on wall)
+    static void renderPoster(
+        GLuint planeVAO,
+        Shader& shader,
+        const glm::mat4& view,
+        const glm::mat4& projection,
+        const glm::vec3& position,
+        const glm::vec3& scale,
+        GLuint textureID,
+        float rotationDegrees = 0.0f,
+        const glm::vec3& rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f)
+    );
 };
 
 #endif

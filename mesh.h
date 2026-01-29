@@ -14,7 +14,8 @@ public:
         TETRAHEDRON,
         PENTAHEDRON,
         WINDOW,
-        CYLINDER
+        CYLINDER,
+        PARABOLOID
     };
 
 

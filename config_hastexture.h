@@ -1,7 +1,7 @@
 #ifndef CONFIG_TEXTURE_H
 #define CONFIG_TEXTURE_H
 
-static const char* vertexShaderSource =
+static const char* vertexShaderSource_withTexture =
 "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
 "layout (location = 1) in vec3 aNormal;\n"
@@ -20,7 +20,7 @@ static const char* vertexShaderSource =
 "{\n"
 "    FragPos = vec3(model * vec4(aPos, 1.0));\n"
 "    Normal = mat3(transpose(inverse(model))) * aNormal;\n"
-"	 vec2 center = aTexCoords - 0.5;\n"
+"	 vec2 center = aTexCoords - vec2(0.5);\n"
 "	 float cosA = cos(texRotation);\n"
 "	 float sinA = sin(texRotation);\n"
 "	 mat2 rotMat = mat2(cosA, -sinA, sinA, cosA);\n"
@@ -30,7 +30,7 @@ static const char* vertexShaderSource =
 
 
 
-static const char* lightCubeFragmentShaderSource =
+static const char* lightCubeFragmentShaderSource_withTexture =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
 "void main()\n"
@@ -39,7 +39,7 @@ static const char* lightCubeFragmentShaderSource =
 "}\n\0";
 
 
-static const char* lightingFragmentShaderSource =
+static const char* lightingFragmentShaderSource_withTexture =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
 "\n"

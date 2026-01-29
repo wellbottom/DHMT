@@ -101,9 +101,9 @@ namespace Colors {
     const glm::vec3 WALL_SPECULAR(0.3f, 0.3f, 0.3f);
 
     // Floor
-    const glm::vec3 FLOOR_AMBIENT(0.1f, 0.3f, 0.1f);
-    const glm::vec3 FLOOR_DIFFUSE(0.2f, 0.6f, 0.2f);
-    const glm::vec3 FLOOR_SPECULAR(0.1f, 0.1f, 0.1f);
+    const glm::vec3 FLOOR_AMBIENT(0.3f, 0.1f, 0.8f);
+    const glm::vec3 FLOOR_DIFFUSE(0.6f, 0.2f, 0.15f);
+    const glm::vec3 FLOOR_SPECULAR(0.2f, 0.1f, 0.1f);
 
     // Ceiling
     const glm::vec3 CEILING_AMBIENT(0.05f, 0.05f, 0.05f);
@@ -134,5 +134,7 @@ namespace Colors {
     const glm::vec3 BENCH_DIFFUSE(0.4f, 0.25f, 0.13f);
     const glm::vec3 BENCH_SPECULAR(0.2f, 0.13f, 0.07f);
 }
+
+
 
 #endif

@@ -26,6 +26,45 @@ void ClassroomObjects::renderClassroomStructure(
         Colors::FLOOR_AMBIENT, Colors::FLOOR_DIFFUSE, Colors::FLOOR_SPECULAR
     );
 
+    //1.1 Render additional floor outside classroom
+    // 
+    // Additional grey floor next to the green floor
+    const glm::vec3 GREY_FLOOR_AMBIENT(0.3f, 0.3f, 0.3f);
+    const glm::vec3 GREY_FLOOR_DIFFUSE(0.5f, 0.5f, 0.5f);
+    const glm::vec3 GREY_FLOOR_SPECULAR(0.2f, 0.2f, 0.2f);
+
+    RenderUtils::renderPlane(
+        planeVAO, shader,
+        glm::vec3(ClassroomConfig::WIDTH, 0.0f, 0.0f),  // Position it adjacent to the current floor
+        glm::vec3(ClassroomConfig::WIDTH, 1.0f, DEPTH),
+        GREY_FLOOR_AMBIENT, GREY_FLOOR_DIFFUSE, GREY_FLOOR_SPECULAR
+    );
+
+    //Additional grey floor in front of the classroom
+    RenderUtils::renderPlane(
+        planeVAO, shader,
+        glm::vec3(0.0f, 0.0f, -DEPTH),  // Position it in front of the current floor
+        glm::vec3(ClassroomConfig::WIDTH * 3, 1.0f, DEPTH),
+        GREY_FLOOR_AMBIENT, GREY_FLOOR_DIFFUSE, GREY_FLOOR_SPECULAR
+    );
+
+    //Additional grey floor behind the classroom
+    RenderUtils::renderPlane(
+        planeVAO, shader,
+        glm::vec3(0.0f, 0.0f, DEPTH),  // Position it behind the current floor
+        glm::vec3(ClassroomConfig::WIDTH * 3, 1.0f, DEPTH),
+        GREY_FLOOR_AMBIENT, GREY_FLOOR_DIFFUSE, GREY_FLOOR_SPECULAR
+    );
+
+
+    //Additional grey floor to the left of the classroom
+    RenderUtils::renderPlane(
+        planeVAO, shader,
+        glm::vec3(-ClassroomConfig::WIDTH, 0.0f, 0.0f),  // Position it to the left of the current floor
+        glm::vec3(ClassroomConfig::WIDTH, 1.0f, DEPTH),
+        GREY_FLOOR_AMBIENT, GREY_FLOOR_DIFFUSE, GREY_FLOOR_SPECULAR
+    );
+
     // 2. Render ceiling
     RenderUtils::renderPlane(
         planeVAO, shader,
@@ -545,4 +584,45 @@ void ClassroomObjects::renderProjector(
         Colors::LENS_AMBIENT, Colors::LENS_DIFFUSE, Colors::LENS_SPECULAR,
         1.0f, 90.0f, glm::vec3(1.0f, 0.0f, 0.0f)
     );
+}// Add this function to ClassroomObjects.cpp at the end
+
+void ClassroomObjects::renderPoster(
+    GLuint planeVAO,
+    Shader& shader,
+    const glm::mat4& view,
+    const glm::mat4& projection,
+    const glm::vec3& position,
+    const glm::vec3& scale,
+    GLuint textureID,
+    float rotationDegrees,
+    const glm::vec3& rotationAxis
+) {
+    shader.use();
+    shader.setMat4("projection", projection);
+    shader.setMat4("view", view);
+
+    // Enable texturing
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    shader.setInt("material.diffuse", 0);
+    shader.setInt("material.specular", 0);
+    shader.setFloat("material.shininess", 16.0f);
+
+    // Build transformation matrix
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+
+    // Apply rotation
+    if (rotationDegrees != 0.0f) {
+        model = glm::rotate(model, glm::radians(rotationDegrees), rotationAxis);
+    }
+
+    // Apply scale
+    model = glm::scale(model, scale);
+
+    shader.setMat4("model", model);
+
+    // Render the plane
+    glBindVertexArray(planeVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);  // Plane has 6 vertices (2 triangles)
 }

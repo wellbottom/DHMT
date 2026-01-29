@@ -100,7 +100,9 @@ static std::vector<float> pentahedronVertices = {
 
 // Window geometry - a frame with 4 rectangular panes (2x2 grid)
 static std::vector<float> windowVertices;
-
+static std::vector<float> sphereVertices;
+static std::vector<float> cylinderVertices;
+static std::vector<float> paraboloidVertices;
 
 static void generateWindow()
 {
@@ -296,8 +298,6 @@ static void generateWindow()
 }
 
 // lightweight generated UV sphere
-static std::vector<float> sphereVertices;
-
 static void generateSphere()
 {
     const unsigned int X_SEGMENTS = 32;
@@ -368,8 +368,6 @@ static void generateSphere()
 }
 
 
-static std::vector<float> cylinderVertices;
-
 static void generateCylinder()
 {
     const unsigned int SEGMENTS = 32;
@@ -428,6 +426,118 @@ static void generateCylinder()
     }
 }
 
+// Generate paraboloid shape (y = a * (x^2 + z^2))
+static void generateParaboloid()
+{
+    paraboloidVertices.clear();
+
+    const unsigned int RADIAL_SEGMENTS = 32;
+    const unsigned int HEIGHT_SEGMENTS = 16;
+    const float PI = 3.1415926f;
+    const float maxRadius = 0.5f;
+    const float height = 1.0f;
+    const float a = height / (maxRadius * maxRadius); // Parabola coefficient
+
+    auto pushVertex = [](float x, float y, float z, float nx, float ny, float nz, float u, float v)
+        {
+            paraboloidVertices.push_back(x);
+            paraboloidVertices.push_back(y);
+            paraboloidVertices.push_back(z);
+            paraboloidVertices.push_back(nx);
+            paraboloidVertices.push_back(ny);
+            paraboloidVertices.push_back(nz);
+            paraboloidVertices.push_back(u);
+            paraboloidVertices.push_back(v);
+        };
+
+    // Generate the paraboloid surface
+    for (unsigned int h = 0; h < HEIGHT_SEGMENTS; ++h)
+    {
+        for (unsigned int r = 0; r < RADIAL_SEGMENTS; ++r)
+        {
+            // Calculate radii for current and next height level
+            float t0 = (float)h / HEIGHT_SEGMENTS;
+            float t1 = (float)(h + 1) / HEIGHT_SEGMENTS;
+
+            float y0 = t0 * height - height / 2.0f;  // Map to [-height/2, height/2]
+            float y1 = t1 * height - height / 2.0f;
+
+            // For paraboloid: r = sqrt(y/a), but we reverse it
+            float radius0 = sqrt(abs(y0 + height / 2.0f) / a);
+            float radius1 = sqrt(abs(y1 + height / 2.0f) / a);
+
+            // Calculate angles
+            float angle0 = (float)r / RADIAL_SEGMENTS * 2.0f * PI;
+            float angle1 = (float)(r + 1) / RADIAL_SEGMENTS * 2.0f * PI;
+
+            // Calculate positions
+            float x00 = cos(angle0) * radius0;
+            float z00 = sin(angle0) * radius0;
+            float x01 = cos(angle1) * radius0;
+            float z01 = sin(angle1) * radius0;
+            float x10 = cos(angle0) * radius1;
+            float z10 = sin(angle0) * radius1;
+            float x11 = cos(angle1) * radius1;
+            float z11 = sin(angle1) * radius1;
+
+            // Calculate normals (derivative of paraboloid)
+            glm::vec3 p00(x00, y0, z00);
+            glm::vec3 p01(x01, y0, z01);
+            glm::vec3 p10(x10, y1, z10);
+            glm::vec3 p11(x11, y1, z11);
+
+            // Approximate normal for each vertex
+            float dydx0 = 2.0f * a * radius0 * cos(angle0);
+            float dydz0 = 2.0f * a * radius0 * sin(angle0);
+            glm::vec3 n00 = glm::normalize(glm::vec3(-dydx0, 1.0f, -dydz0));
+
+            float dydx1 = 2.0f * a * radius0 * cos(angle1);
+            float dydz1 = 2.0f * a * radius0 * sin(angle1);
+            glm::vec3 n01 = glm::normalize(glm::vec3(-dydx1, 1.0f, -dydz1));
+
+            float dydx2 = 2.0f * a * radius1 * cos(angle0);
+            float dydz2 = 2.0f * a * radius1 * sin(angle0);
+            glm::vec3 n10 = glm::normalize(glm::vec3(-dydx2, 1.0f, -dydz2));
+
+            float dydx3 = 2.0f * a * radius1 * cos(angle1);
+            float dydz3 = 2.0f * a * radius1 * sin(angle1);
+            glm::vec3 n11 = glm::normalize(glm::vec3(-dydx3, 1.0f, -dydz3));
+
+            // UV coordinates
+            float u0 = (float)r / RADIAL_SEGMENTS;
+            float u1 = (float)(r + 1) / RADIAL_SEGMENTS;
+            float v0 = t0;
+            float v1 = t1;
+
+            // First triangle
+            pushVertex(p00.x, p00.y, p00.z, n00.x, n00.y, n00.z, u0, v0);
+            pushVertex(p10.x, p10.y, p10.z, n10.x, n10.y, n10.z, u0, v1);
+            pushVertex(p11.x, p11.y, p11.z, n11.x, n11.y, n11.z, u1, v1);
+
+            // Second triangle
+            pushVertex(p00.x, p00.y, p00.z, n00.x, n00.y, n00.z, u0, v0);
+            pushVertex(p11.x, p11.y, p11.z, n11.x, n11.y, n11.z, u1, v1);
+            pushVertex(p01.x, p01.y, p01.z, n01.x, n01.y, n01.z, u1, v0);
+        }
+    }
+
+    // Add bottom cap (optional)
+    for (unsigned int i = 0; i < RADIAL_SEGMENTS; ++i)
+    {
+        float angle1 = (float)i / RADIAL_SEGMENTS * 2.0f * PI;
+        float angle2 = (float)(i + 1) / RADIAL_SEGMENTS * 2.0f * PI;
+
+        float x1 = cos(angle1) * 0.01f;  // Very small radius at bottom
+        float z1 = sin(angle1) * 0.01f;
+        float x2 = cos(angle2) * 0.01f;
+        float z2 = sin(angle2) * 0.01f;
+
+        pushVertex(0.0f, -height / 2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.5f, 0.5f);
+        pushVertex(x2, -height / 2.0f, z2, 0.0f, -1.0f, 0.0f, 0.5f + x2, 0.5f + z2);
+        pushVertex(x1, -height / 2.0f, z1, 0.0f, -1.0f, 0.0f, 0.5f + x1, 0.5f + z1);
+    }
+}
+
 const std::vector<float>& Mesh::GetVertices(Type type)
 {
     if (sphereVertices.empty())
@@ -436,8 +546,11 @@ const std::vector<float>& Mesh::GetVertices(Type type)
     if (windowVertices.empty())
         generateWindow();
 
-    if (cylinderVertices.empty())  // ADD THIS LINE
+    if (cylinderVertices.empty())
         generateCylinder();
+
+    if (paraboloidVertices.empty())
+        generateParaboloid();
 
     switch (type)
     {
@@ -447,7 +560,8 @@ const std::vector<float>& Mesh::GetVertices(Type type)
     case TETRAHEDRON:  return tetrahedronVertices;
     case PENTAHEDRON:  return pentahedronVertices;
     case WINDOW:       return windowVertices;
-	case CYLINDER:     return cylinderVertices;
+    case CYLINDER:     return cylinderVertices;
+    case PARABOLOID:   return paraboloidVertices;
     }
 
     return cubeVertices;
@@ -465,7 +579,8 @@ int Mesh::GetVertexCount(Type type)
     case TETRAHEDRON:  return (int)tetrahedronVertices.size() / 8;
     case PENTAHEDRON:  return (int)pentahedronVertices.size() / 8;
     case WINDOW:       return (int)windowVertices.size() / 8;
-	case CYLINDER:     return (int)cylinderVertices.size() / 8;
+    case CYLINDER:     return (int)cylinderVertices.size() / 8;
+    case PARABOLOID:   return (int)paraboloidVertices.size() / 8;
     }
 
     return 0;
