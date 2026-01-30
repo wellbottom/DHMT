@@ -124,6 +124,12 @@ public:
         glm::mat4& projection,
         glm::vec3 position
     );
+    static void renderHallway(
+        GLuint cubeVAO,
+        Shader& shader,
+        glm::mat4& view,
+        glm::mat4& projection
+    );
 };
 
 

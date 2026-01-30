@@ -122,10 +122,10 @@ namespace Colors {
     const glm::vec3 FLOOR_DIFFUSE(0.6f, 0.2f, 0.15f);
     const glm::vec3 FLOOR_SPECULAR(0.2f, 0.1f, 0.1f);
 
-    // Ceiling
-    const glm::vec3 CEILING_AMBIENT(0.05f, 0.05f, 0.05f);
-    const glm::vec3 CEILING_DIFFUSE(0.1f, 0.1f, 0.1f);
-    const glm::vec3 CEILING_SPECULAR(0.05f, 0.05f, 0.05f);
+    // Ceiling (Bright White)
+    const glm::vec3 CEILING_AMBIENT(0.8f, 0.8f, 0.8f);   // High ambient for general brightness
+    const glm::vec3 CEILING_DIFFUSE(0.95f, 0.95f, 0.95f); // Near-pure white for direct light
+    const glm::vec3 CEILING_SPECULAR(0.5f, 0.5f, 0.5f);  // Subtle shine
 
     // Metal
     const glm::vec3 METAL_DARK_AMBIENT(0.15f, 0.15f, 0.15f);
@@ -150,6 +150,35 @@ namespace Colors {
     const glm::vec3 BENCH_AMBIENT(0.2f, 0.13f, 0.07f);
     const glm::vec3 BENCH_DIFFUSE(0.4f, 0.25f, 0.13f);
     const glm::vec3 BENCH_SPECULAR(0.2f, 0.13f, 0.07f);
+
+    // Handrail - Vertical posts (darker wood)
+    const glm::vec3 HANDRAIL_POST_AMBIENT(0.15f, 0.1f, 0.05f);
+    const glm::vec3 HANDRAIL_POST_DIFFUSE(0.3f, 0.2f, 0.1f);
+    const glm::vec3 HANDRAIL_POST_SPECULAR(0.15f, 0.1f, 0.05f);
+
+    // Handrail - Top rail (polished wood)
+    const glm::vec3 HANDRAIL_TOP_AMBIENT(0.25f, 0.15f, 0.08f);
+    const glm::vec3 HANDRAIL_TOP_DIFFUSE(0.5f, 0.3f, 0.15f);
+    const glm::vec3 HANDRAIL_TOP_SPECULAR(0.4f, 0.25f, 0.13f);
 }
+
+namespace HallwayConfig {
+    const float WIDTH = 15.0f;           // Hallway width
+    const float LENGTH = 50.0f;          // Hallway length
+    const float RAIL_POST_WIDTH = 0.15f; // Post thickness
+    const float RAIL_POST_HEIGHT = 4.0f; // Post height
+    const int NUM_POSTS = 5;             // Total posts (includes top rail),
+    const float HEIGHT = 15.0f;
+
+    const float POST_SPACING = LENGTH / (NUM_POSTS - 1);
+
+    // The top rail sits at the very top of the posts
+    const float RAIL_TOP_HEIGHT = RAIL_POST_HEIGHT;
+
+    // The top rail is usually slightly wider than the posts for a better grip
+    const float RAIL_TOP_WIDTH = RAIL_POST_WIDTH * 1.2f;
+}
+
+
 
 #endif
